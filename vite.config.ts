@@ -65,6 +65,7 @@ export default defineConfig(({ mode }) => {
   const siteConfiguration = loadSiteConfiguration()
 
   return {
+    root: path.resolve(__dirname),
     base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : '/',
     build: {
       sourcemap: emitSourcemaps ? 'inline' : false,
