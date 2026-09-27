@@ -4,22 +4,34 @@
  */
 
 export function getApiBaseUrl(): string {
-  const envUrl = (import.meta as any).env?.VITE_API_BASE_URL;
+  const envUrl =
+    (import.meta as any).env?.VITE_API_BASE_URL ||
+    (import.meta as any).env?.VITE_API_URL;
 
-  // If explicitly configured (even as empty string for same-origin proxy)
-  if (typeof envUrl === "string") {
+  // If explicitly configured in environment variables (Vercel Dashboard or .env)
+  if (typeof envUrl === "string" && envUrl.trim().length > 0) {
     const trimmed = envUrl.trim();
     return trimmed.endsWith("/") ? trimmed.slice(0, -1) : trimmed;
   }
 
-  // In production builds without explicit VITE_API_BASE_URL, default to same-origin relative paths ("")
-  // which routes through Vercel rewrites to the backend or serverless function
-  if ((import.meta as any).env?.PROD) {
-    return "";
+  // Development local fallback
+  if (!(import.meta as any).env?.PROD) {
+    return "http://localhost:8000";
   }
 
-  // Development fallback
-  return "http://localhost:8000";
+  // In production builds without explicit VITE_API_BASE_URL, default to same-origin relative paths ("")
+  // Do NOT hardcode localhost or fake backend domains in production bundles
+  return "";
+}
+
+export function isBackendConfigured(): boolean {
+  const envUrl =
+    (import.meta as any).env?.VITE_API_BASE_URL ||
+    (import.meta as any).env?.VITE_API_URL;
+  if (typeof envUrl === "string" && envUrl.trim().length > 0) {
+    return true;
+  }
+  return !(import.meta as any).env?.PROD;
 }
 
 export function apiUrl(endpoint: string): string {
@@ -28,13 +40,15 @@ export function apiUrl(endpoint: string): string {
   }
   const base = getApiBaseUrl();
   const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-  return `${base}${cleanEndpoint}`;
+  return base ? `${base}${cleanEndpoint}` : cleanEndpoint;
 }
 
 export function getApiHostDisplay(): string {
   const base = getApiBaseUrl();
   if (!base) {
-    return "Vercel / Same Origin";
+    return (import.meta as any).env?.PROD
+      ? "Not Configured (Set VITE_API_BASE_URL in Vercel)"
+      : "localhost:8000";
   }
   try {
     const parsed = new URL(base);
@@ -44,15 +58,22 @@ export function getApiHostDisplay(): string {
   }
 }
 
-export async function checkApiHealth(): Promise<{ ok: boolean; status?: string; service?: string }> {
+export async function checkApiHealth(): Promise<{ ok: boolean; status?: string; service?: string; host?: string }> {
+  const host = getApiHostDisplay();
   try {
-    const res = await fetch(apiUrl("/api/health"), { method: "GET" });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const res = await fetch(apiUrl("/api/health"), {
+      method: "GET",
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
     if (res.ok) {
       const data = await res.json();
-      return { ok: true, status: data.status, service: data.service };
+      return { ok: true, status: data.status, service: data.service, host };
     }
-    return { ok: false };
+    return { ok: false, host };
   } catch {
-    return { ok: false };
+    return { ok: false, host };
   }
 }

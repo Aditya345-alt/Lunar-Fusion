@@ -100,6 +100,7 @@ async def login(req: LoginRequest, request: Request, response: Response):
         "success": True,
         "data": {
             "access_token": access_token,
+            "refresh_token": refresh_token,
             "token_type": "bearer",
             "expires_in": JWT_ACCESS_EXPIRE_MINUTES * 60,
             "user": {
@@ -160,6 +161,7 @@ async def register(req: RegisterRequest, request: Request, response: Response):
         "success": True,
         "data": {
             "access_token": access_token,
+            "refresh_token": refresh_token,
             "verification_token_dev": raw_token,
             "user": {
                 "id": new_user_id,
@@ -233,6 +235,7 @@ async def refresh_session(request: Request, response: Response):
         "success": True,
         "data": {
             "access_token": new_access,
+            "refresh_token": token,
             "token_type": "bearer",
             "expires_in": JWT_ACCESS_EXPIRE_MINUTES * 60,
             "user": {

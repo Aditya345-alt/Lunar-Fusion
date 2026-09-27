@@ -65,17 +65,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshSessionInternal = async (): Promise<boolean> => {
     try {
+      const storedRefresh =
+        sessionStorage.getItem("lunar_fusion_refresh_token") ||
+        localStorage.getItem("lunar_fusion_refresh_token") ||
+        "";
+
       const res = await fetch(apiUrl("/api/auth/refresh"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ refresh_token: "" }),
+        body: JSON.stringify({ refresh_token: storedRefresh }),
       });
       if (!res.ok) return false;
       const data = await res.json();
       if (data.success && data.data?.access_token) {
         setToken(data.data.access_token);
         sessionStorage.setItem("lunar_fusion_access_token", data.data.access_token);
+        if (data.data.refresh_token) {
+          if (localStorage.getItem("lunar_fusion_refresh_token")) {
+            localStorage.setItem("lunar_fusion_refresh_token", data.data.refresh_token);
+          } else {
+            sessionStorage.setItem("lunar_fusion_refresh_token", data.data.refresh_token);
+          }
+        }
         if (data.data.user) {
           setUser(data.data.user);
         }
@@ -142,9 +154,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (rememberMe) {
         localStorage.setItem("lunar_fusion_access_token", newToken);
+        if (data.data.refresh_token) {
+          localStorage.setItem("lunar_fusion_refresh_token", data.data.refresh_token);
+        }
       } else {
         sessionStorage.setItem("lunar_fusion_access_token", newToken);
         localStorage.removeItem("lunar_fusion_access_token");
+        if (data.data.refresh_token) {
+          sessionStorage.setItem("lunar_fusion_refresh_token", data.data.refresh_token);
+          localStorage.removeItem("lunar_fusion_refresh_token");
+        }
       }
 
       return { success: true };
@@ -176,6 +195,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(newToken);
       setUser(data.data.user);
       sessionStorage.setItem("lunar_fusion_access_token", newToken);
+      if (data.data.refresh_token) {
+        sessionStorage.setItem("lunar_fusion_refresh_token", data.data.refresh_token);
+      }
 
       return {
         success: true,
@@ -200,6 +222,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(null);
       sessionStorage.removeItem("lunar_fusion_access_token");
       localStorage.removeItem("lunar_fusion_access_token");
+      sessionStorage.removeItem("lunar_fusion_refresh_token");
+      localStorage.removeItem("lunar_fusion_refresh_token");
     }
   };
 

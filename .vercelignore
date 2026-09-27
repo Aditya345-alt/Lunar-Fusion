@@ -1,8 +1,7 @@
-# Vercel deployment ignore rules
+# Vercel deployment ignore rules (Static Frontend only)
 .git
 .gitignore
 .venv
-backend/.venv
 node_modules
 dist
 docs
@@ -13,5 +12,12 @@ __pycache__
 .env
 .env.local
 .env.*.local
-backend/tests
-backend/scripts/generate_tiles.py
+
+# Backend files (Hosted separately on Render/Railway/Fly.io)
+api/
+backend/
+requirements.txt
+docker-compose.yml
+render.yaml
+Procfile
+
