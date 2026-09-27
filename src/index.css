@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;600;700&family=Geist:wght@300;400;600;700&display=swap');
+@import 'tailwindcss';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --gc: #0a0a0a;
+  --gcharcoal: #1c1c1e;
+  --gsurface: #3f4d80;
+  --gfg: #ffffff;
+  --gfg-muted: #8a8a8e;
+  --gdivider: rgba(255,255,255,0.06);
+  --gaccent: #3d5afe;
+  --gaccent2: #7745f4;
+  --gon-accent: #ffffff;
+  --gerror: #ff5c6c;
+  --gsuccess: #68c389;
+  --gwarning: #e6a75d;
+  --gr-sm: 8px;
+  --gr-md: 16px;
+  --gr-lg: 24px;
+  --gr-full: 9999px;
+  --gfont-display: "Hanken Grotesk", system-ui, sans-serif;
+  --gfont-body: "Geist", system-ui, sans-serif;
+  --gdur: 150ms;
+  --gease: cubic-bezier(0.4,0,0.2,1);
+}
+
+body {
+  background: var(--gc);
+  color: var(--gfg);
+  font-family: var(--gfont-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+button {
+  font-family: var(--gfont-body);
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+img, svg { display: block; max-width: 100%; }
+h1, h2, h3, h4 { font-family: var(--gfont-display); font-weight: 700; margin: 0; }
+p { margin: 0; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+

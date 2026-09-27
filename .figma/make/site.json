@@ -1,0 +1,11 @@
+{
+  "title": "Lunar Fusion — Multi-Modal Lunar Image Registration",
+  "description": "AI-driven aerospace platform aligning Chandrayaan-2 lunar imagery (OHRC, TMC-2, IIRS) with LRO-NAC reference data for sub-pixel image correspondence and registration (ISRO Problem Statement 26166).",
+  "robots": {
+    "index": true
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
