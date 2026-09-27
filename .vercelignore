@@ -1,0 +1,17 @@
+# Vercel deployment ignore rules
+.git
+.gitignore
+.venv
+backend/.venv
+node_modules
+dist
+docs
+*.log
+*.tmp
+__pycache__
+*.pyc
+.env
+.env.local
+.env.*.local
+backend/tests
+backend/scripts/generate_tiles.py

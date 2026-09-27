@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lunar-fusion-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - JWT_SECRET_KEY=lunar-fusion-jwt-secret-key-2026-sih-isro-demo
+      - CORS_ORIGINS=http://localhost:8443,http://localhost:5173,http://127.0.0.1:8443
+    volumes:
+      - lunar_catalog_data:/app/catalog_tiles
+      - lunar_db_data:/app/data
+
+volumes:
+  lunar_catalog_data:
+  lunar_db_data:
